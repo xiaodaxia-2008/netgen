@@ -2,7 +2,11 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING INTERNAL)
 endif(NOT CMAKE_BUILD_TYPE)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL")
+else()
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+endif()
 
 cmake_minimum_required(VERSION 3.16)
 cmake_policy(VERSION 3.16)
