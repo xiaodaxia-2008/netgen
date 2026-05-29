@@ -10,7 +10,12 @@ target_link_libraries( nglib PUBLIC ngcore PRIVATE ${CMAKE_THREAD_LIBS_INIT} ${J
 
 # Suppress warnings from netgen internal code
 if(MSVC)
-  target_compile_options(nglib PRIVATE /wd4828)
+  target_compile_options(nglib PRIVATE
+    /wd4828 # illegal character in source file (opti.hpp)
+    /wd4834 # discarding [[nodiscard]] return value
+    /wd4297 # noexcept mismatch
+    /wd4068 # unknown pragma (e.g. '#pragma clang')
+  )
 endif()
 
 install(TARGETS nglib netgen_cgns ${NG_INSTALL_DIR})
