@@ -55,7 +55,7 @@ if(USE_PYTHON)
 endif(USE_PYTHON)
 
 if(WIN32)
-  target_compile_options(ngcore PUBLIC /bigobj $<BUILD_INTERFACE:/MP;/W1;/wd4068>)
+  target_compile_options(ngcore PRIVATE /bigobj /MP /W1 /wd4068)
   get_WIN32_WINNT(ver)
   target_compile_definitions(ngcore PUBLIC _WIN32_WINNT=${ver} WNT WNT_WINDOW NOMINMAX MSVC_EXPRESS _CRT_SECURE_NO_WARNINGS HAVE_STRUCT_TIMESPEC WIN32)
   target_link_options(ngcore PUBLIC /ignore:4273 /ignore:4217 /ignore:4049)
@@ -64,7 +64,13 @@ else(WIN32)
 endif(WIN32)
 
 target_compile_definitions(ngcore PRIVATE NGCORE_EXPORTS)
-target_include_directories(ngcore INTERFACE $<INSTALL_INTERFACE:${NG_INSTALL_DIR_INCLUDE}> $<INSTALL_INTERFACE:${NG_INSTALL_DIR_INCLUDE}/include>)
+target_include_directories(ngcore PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libsrc>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libsrc/include>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:${NG_INSTALL_DIR_INCLUDE}>
+  $<INSTALL_INTERFACE:${NG_INSTALL_DIR_INCLUDE}/include>
+)
 
 if(CHECK_RANGE)
   target_compile_definitions(ngcore PUBLIC NETGEN_ENABLE_CHECK_RANGE)
@@ -171,4 +177,15 @@ if(USE_MPI)
   endif(USE_MPI_WRAPPER)
 
 endif(USE_MPI)
+
+# Suppress netgen internal warnings from propagating to consumers
+if(MSVC)
+  target_compile_options(ngcore PRIVATE
+    /wd4100 # unreferenced formal parameter
+    /wd4458 # declaration hides class member
+    /wd4459 # declaration hides global declaration
+    /wd4245 # signed/unsigned mismatch
+    /wd4127 # conditional expression is constant
+  )
+endif()
 

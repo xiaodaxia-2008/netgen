@@ -192,12 +192,11 @@ endif (ADDITIONAL_PATHS)
 
 #######################################################################
 # build options
-include_directories ("${PROJECT_SOURCE_DIR}/include")
-include_directories ("${PROJECT_SOURCE_DIR}/libsrc")
-include_directories ("${PROJECT_SOURCE_DIR}/libsrc/include")
-include_directories ("${PROJECT_BINARY_DIR}")
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+if(MSVC)
+  add_compile_options(/utf-8)
+endif()
 
 if(USE_PYTHON)
     get_filename_component(NETGEN_PYTHON_DIR_ABSOLUTE ${NG_INSTALL_DIR_PYTHON} ABSOLUTE BASE_DIR ${CMAKE_INSTALL_PREFIX})
@@ -225,7 +224,7 @@ if(HAVE_DLFCN_H)
   add_definitions(-DHAVE_DLFCN_H)
 endif()
 
-include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+# Build-dir include paths moved to target_include_directories on ngcore
 
 #######################################################################
 # platform specific definitions and flags
